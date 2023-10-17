@@ -143,14 +143,15 @@ class Bomb:
     
 class Score:
     def __init__(self):
-        self.font = pg.font.SysFont("hgp創英角ポップ体", 30)
+        self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
         self.color = (0, 0, 255)
         self.value = 0
-        self.img = self.font.render("Score:{}".format(self.value), 0, self.color)
+        self.img = self.font.render("スコア：{}".format(self.value), 0, self.color)
         self.position = (100, HEIGHT -50)
         
-    def update(self):
-        self.img = self.font.render("Score:{}".format(self.value), 0, self.color)
+    def update(self, screen):
+        self.img = self.font.render("スコア：{}".format(self.value), 0, self.color)
+        screen.blit(self.img, self.position)
 
 
 def main():
@@ -191,18 +192,17 @@ def main():
                     bombs[i] = None
                     bird.change_img(6, screen)
                     score.value += 1
-                    score.update()
                     pg.display.update()
         bombs = [bomb for bomb in bombs if bomb is not None]                        
 
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        screen.blit(score.img, score.position)
         for bomb in bombs:
             bomb.update(screen)
         if beam is not None:
             beam.update(screen)
+        score.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
