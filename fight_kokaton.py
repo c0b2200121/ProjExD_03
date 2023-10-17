@@ -143,14 +143,34 @@ class Bomb:
     
 class Score:
     def __init__(self):
-        self.font = pg.font.SysFont("hgp創英角ポップ体", 30)
+        self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
         self.color = (0, 0, 255)
         self.value = 0
-        self.img = self.font.render("Score:{}".format(self.value), 0, self.color)
+        self.img = self.font.render("スコア：{}".format(self.value), 0, self.color)
         self.position = (100, HEIGHT -50)
         
     def update(self):
-        self.img = self.font.render("Score:{}".format(self.value), 0, self.color)
+        self.img = self.font.render("スコア：{}".format(self.value), 0, self.color)
+        
+        
+class Explosion:
+    def __init__(self, center, images, life):
+        self.center = center
+        self.images = images
+        self.life = life
+        self.current_frame = 0
+        self.image = self.images[self.current_frame]
+        self.rect = self.image.get_rect()
+        self.rect.center = self.center
+
+    def update(self):
+        self.life -= 1
+        if self.life <= 0:
+            return True
+        else:
+            self.current_frame = (self.current_frame + 1) % len(self.images)
+            self.image = self.images[self.current_frame]
+            return False
 
 
 def main():
@@ -162,6 +182,13 @@ def main():
     beam = None
     
     score = Score()
+    
+    # Explosionの画像リストを読み込む
+    explosion_images = [pg.image.load("ex03/fig/explosion.gif")]
+    explosion_images = []
+    
+
+    explosions = []
 
     clock = pg.time.Clock()
     tmr = 0
@@ -190,6 +217,10 @@ def main():
                     beam = None
                     bombs[i] = None
                     bird.change_img(6, screen)
+                    explosions = [explosion for explosion in explosions if not explosion.update()]   
+                    # 爆発を画面に描画
+                    for explosion in explosions:
+                        screen.blit(explosion.image, explosion.rect.topleft)
                     score.value += 1
                     score.update()
                     pg.display.update()
